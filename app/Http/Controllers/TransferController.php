@@ -9,16 +9,6 @@ use Illuminate\Http\Request;
 class TransferController extends Controller
 {
 
-    public function index()
-    {
-        //
-    }
-
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         $wallet = Wallet::find($request->wallet_id);
@@ -36,21 +26,24 @@ class TransferController extends Controller
 
     public function show(Transfer $transfer)
     {
-        //
-    }
-
-    public function edit(Transfer $transfer)
-    {
-        //
+        return response()->json($transfer, 200);
     }
 
     public function update(Request $request, Transfer $transfer)
     {
-        //
+        $data = $request->all();
+        $transfer->update($data);
+
+        return response()->json($transfer, 200);
     }
 
     public function destroy(Transfer $transfer)
     {
-        //
+        $wallet = $transfer->wallet;
+        $wallet->money = $wallet->money - $transfer->amount;
+        $wallet->save();
+        $transfer->delete();
+
+        return response()->json($wallet, 200);
     }
 }
